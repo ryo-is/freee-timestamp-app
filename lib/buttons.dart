@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class EnableButton extends StatelessWidget {
   final String text;
   final GestureTapCallback onPressed;
-  const EnableButton({super.key, required this.text, required this.onPressed});
+  final MaterialColor color;
+  const EnableButton(
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      this.color = Colors.blue});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +19,8 @@ class EnableButton extends StatelessWidget {
           height: 60,
           child: ElevatedButton(
             onPressed: onPressed,
-            style: ElevatedButton.styleFrom(elevation: 0),
+            style:
+                ElevatedButton.styleFrom(elevation: 0, backgroundColor: color),
             child: Text(
               text,
               style: const TextStyle(fontSize: 18),

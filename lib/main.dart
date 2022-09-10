@@ -12,11 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Freee TimeStamp App'),
+      home: const MyHomePage(title: 'Freee 勤怠打刻アプリ'),
     );
   }
 }
@@ -65,11 +66,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         text: "出勤する",
                       ),
                       EnableButton(
-                          text: "休憩する",
-                          onPressed: () => _changeStatus(Status.rest)),
+                        text: "休憩する",
+                        onPressed: () => _changeStatus(Status.rest),
+                        color: Colors.green,
+                      ),
                       EnableButton(
-                          text: "退勤する",
-                          onPressed: () => _changeStatus(Status.workout)),
+                        text: "退勤する",
+                        onPressed: () => _changeStatus(Status.workout),
+                        color: Colors.red,
+                      ),
                     ]
                   : (_status == Status.rest)
                       ? [
@@ -77,8 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             text: "出勤する",
                           ),
                           EnableButton(
-                              text: "休憩から戻る",
-                              onPressed: () => _changeStatus(Status.working)),
+                            text: "休憩から戻る",
+                            onPressed: () => _changeStatus(Status.working),
+                            color: Colors.green,
+                          ),
                           const DisableButton(
                             text: "退勤する",
                           ),
