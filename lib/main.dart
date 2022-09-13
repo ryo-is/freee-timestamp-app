@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:desktop_window/desktop_window.dart';
+
 import 'buttons.dart';
 import 'enums.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await DesktopWindow.setWindowSize(const Size(450, 600));
+
   runApp(const MyApp());
 }
 
@@ -13,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Freee 勤怠打刻アプリ',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -50,15 +56,21 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              '現在のステータス',
-              style: TextStyle(fontSize: 18),
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: Column(children: [
+                const Text(
+                  '現在のステータス',
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  statusToString(_status),
+                  style: const TextStyle(
+                      fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+              ]),
             ),
-            Text(
-              statusToString(_status),
-              style: const TextStyle(fontSize: 18),
-            ),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: (_status == Status.working)
                   ? [
@@ -101,7 +113,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             text: "退勤する",
                           ),
                         ],
-            )
+            ),
+            // const Icon(
+            //   Icons.cached,
+            //   size: 48,
+            //   color: Colors.blue,
+            // )
           ],
         ),
       ),
