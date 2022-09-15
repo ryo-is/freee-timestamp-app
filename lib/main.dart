@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:desktop_window/desktop_window.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'buttons.dart';
 import 'enums.dart';
@@ -8,6 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await DesktopWindow.setWindowSize(const Size(450, 600));
+  await dotenv.load(fileName: '.env.development');
 
   runApp(const MyApp());
 }
@@ -38,12 +42,78 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Status _status = Status.working;
+  List<dynamic> _availableTypes = [];
+  String _accessToken = '';
+  // String _refreshToken = '';
+  String _employeeId = '';
+  String _companyId = '';
 
-  void _changeStatus(Status status) {
-    setState(() {
-      _status = status;
+  Future<void> getAvailableTypes() async {
+    var url = Uri.https(
+        'api.freee.co.jp',
+        '/hr/api/v1/employees/$_employeeId/time_clocks/available_types',
+        {'company_id': _companyId});
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $_accessToken',
+      'accept': 'application/json',
+      'FREEE-VERSION': '2022-02-01'
+    };
+
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      var jsonResponse =
+          convert.jsonDecode(response.body) as Map<String, dynamic>;
+      List<dynamic> availableTypes =
+          jsonResponse['available_types'] as List<dynamic>;
+      setState(() {
+        _availableTypes = availableTypes;
+      });
+    } else {
+      throw ErrorDescription('error status: ${response.statusCode}.');
+    }
+  }
+
+  Future<void> registerTimeClock(AvailableType type) async {
+    var url = Uri.https(
+      'api.freee.co.jp',
+      '/hr/api/v1/employees/$_employeeId/time_clocks',
+    );
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $_accessToken',
+      'content-type': 'application/json',
+      'accept': 'application/json',
+      'FREEE-VERSION': '2022-02-01'
+    };
+    String body = convert.json.encode({
+      'company_id': _companyId,
+      'type': availableTypeToString(type),
     });
+
+    await http.post(url, headers: headers, body: body);
+
+    await getAvailableTypes();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      _accessToken = dotenv.env['ACCESS_TOKEN'] != ''
+          ? dotenv.env['ACCESS_TOKEN'] as String
+          : '';
+      // _refreshToken = dotenv.env['REFRESH_TOKEN'] != ''
+      //     ? dotenv.env['REFRESH_TOKEN'] as String
+      //     : '';
+      _employeeId = dotenv.env['EMPLOYEE_ID'] != ''
+          ? dotenv.env['EMPLOYEE_ID'] as String
+          : '';
+      _companyId = dotenv.env['COMPANY_ID'] != ''
+          ? dotenv.env['COMPANY_ID'] as String
+          : '';
+    });
+
+    getAvailableTypes();
   }
 
   @override
@@ -56,71 +126,63 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              margin: const EdgeInsets.all(10),
-              child: Column(children: [
-                const Text(
-                  '現在のステータス',
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  statusToString(_status),
-                  style: const TextStyle(
-                      fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-              ]),
-            ),
+            // Container(
+            //   margin: const EdgeInsets.all(10),
+            //   child: Column(children: [
+            //     const Text(
+            //       '現在のステータス',
+            //       style: TextStyle(fontSize: 18),
+            //     ),
+            //     Text(
+            //       statusToString(_status),
+            //       style: const TextStyle(
+            //           fontSize: 32, fontWeight: FontWeight.bold),
+            //     ),
+            //   ]),
+            // ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: (_status == Status.working)
-                  ? [
-                      const DisableButton(
-                        text: "出勤する",
-                      ),
-                      EnableButton(
-                        text: "休憩する",
-                        onPressed: () => _changeStatus(Status.rest),
-                        color: Colors.green,
-                      ),
-                      EnableButton(
-                        text: "退勤する",
-                        onPressed: () => _changeStatus(Status.workout),
-                        color: Colors.red,
-                      ),
-                    ]
-                  : (_status == Status.rest)
-                      ? [
-                          const DisableButton(
-                            text: "出勤する",
-                          ),
-                          EnableButton(
-                            text: "休憩から戻る",
-                            onPressed: () => _changeStatus(Status.working),
-                            color: Colors.green,
-                          ),
-                          const DisableButton(
-                            text: "退勤する",
-                          ),
-                        ]
-                      : [
-                          EnableButton(
-                              text: "出勤する",
-                              onPressed: () => _changeStatus(Status.working)),
-                          const DisableButton(
-                            text: "休憩する",
-                          ),
-                          const DisableButton(
-                            text: "退勤する",
-                          ),
-                        ],
+              children: [
+                if (_availableTypes
+                    .where((element) => element == 'clock_in')
+                    .isNotEmpty)
+                  EnableButton(
+                      text: '出勤する',
+                      onPressed: () =>
+                          registerTimeClock(AvailableType.clockIn)),
+                if (_availableTypes
+                    .where((element) => element == 'break_begin')
+                    .isNotEmpty)
+                  EnableButton(
+                    text: '休憩する',
+                    onPressed: () =>
+                        registerTimeClock(AvailableType.breakBegin),
+                    color: Colors.green,
+                  ),
+                if (_availableTypes
+                    .where((element) => element == 'break_end')
+                    .isNotEmpty)
+                  EnableButton(
+                    text: '休憩から戻る',
+                    onPressed: () => registerTimeClock(AvailableType.breakEnd),
+                    color: Colors.green,
+                  ),
+                if (_availableTypes
+                    .where((element) => element == 'clock_out')
+                    .isNotEmpty)
+                  EnableButton(
+                    text: '退勤する',
+                    onPressed: () => registerTimeClock(AvailableType.clockOut),
+                    color: Colors.red,
+                  ),
+              ],
             ),
-            // const Icon(
-            //   Icons.cached,
-            //   size: 48,
-            //   color: Colors.blue,
-            // )
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => getAvailableTypes(),
+        child: const Icon(Icons.cached),
       ),
     );
   }
