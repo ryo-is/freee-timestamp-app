@@ -38,6 +38,7 @@ dependencies:
   desktop_window: ^0.4.0
   http: ^0.13.5
   flutter_dotenv: ^5.0.2
+  localstorage: ^3.0.6
 
 dev_dependencies:
   flutter_test:
