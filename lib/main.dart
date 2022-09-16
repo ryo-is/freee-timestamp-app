@@ -61,8 +61,22 @@ class _MyHomePageState extends State<MyHomePage> {
   String _companyId = '';
   String _clientId = '';
   String _clientSecret = '';
+  bool _isLoading = false;
+
+  void startLoading() {
+    setState(() {
+      _isLoading = true;
+    });
+  }
+
+  void finishLoading() {
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   Future<void> getAvailableTypes() async {
+    startLoading();
     await refreshAccessToken();
 
     var url = Uri.https(
@@ -86,9 +100,12 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       throw ErrorDescription('error status: ${response.statusCode}.');
     }
+
+    finishLoading();
   }
 
   Future<void> registerTimeClock(AvailableType type) async {
+    startLoading();
     await refreshAccessToken();
 
     var url = Uri.https(
@@ -109,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await http.post(url, headers: headers, body: body);
 
     await getAvailableTypes();
+    finishLoading();
   }
 
   Future<void> refreshAccessToken() async {
@@ -174,70 +192,90 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Column(
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+          ),
+          body: Center(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_availableTypes
-                    .where((element) => element == 'clock_in')
-                    .isNotEmpty)
-                  EnableButton(
-                      text: '出勤する',
-                      onPressed: () =>
-                          registerTimeClock(AvailableType.clockIn)),
-                if (_availableTypes
-                    .where((element) => element == 'break_begin')
-                    .isNotEmpty)
-                  EnableButton(
-                    text: '休憩する',
-                    onPressed: () =>
-                        registerTimeClock(AvailableType.breakBegin),
-                    color: Colors.green,
-                  ),
-                if (_availableTypes
-                    .where((element) => element == 'break_end')
-                    .isNotEmpty)
-                  EnableButton(
-                    text: '休憩から戻る',
-                    onPressed: () => registerTimeClock(AvailableType.breakEnd),
-                    color: Colors.green,
-                  ),
-                if (_availableTypes
-                    .where((element) => element == 'clock_out')
-                    .isNotEmpty)
-                  EnableButton(
-                    text: '退勤する',
-                    onPressed: () => registerTimeClock(AvailableType.clockOut),
-                    color: Colors.red,
-                  ),
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (_availableTypes
+                        .where((element) => element == 'clock_in')
+                        .isNotEmpty)
+                      EnableButton(
+                          text: '出勤する',
+                          onPressed: () =>
+                              registerTimeClock(AvailableType.clockIn)),
+                    if (_availableTypes
+                        .where((element) => element == 'break_begin')
+                        .isNotEmpty)
+                      EnableButton(
+                        text: '休憩する',
+                        onPressed: () =>
+                            registerTimeClock(AvailableType.breakBegin),
+                        color: Colors.green,
+                      ),
+                    if (_availableTypes
+                        .where((element) => element == 'break_end')
+                        .isNotEmpty)
+                      EnableButton(
+                        text: '休憩から戻る',
+                        onPressed: () =>
+                            registerTimeClock(AvailableType.breakEnd),
+                        color: Colors.green,
+                      ),
+                    if (_availableTypes
+                        .where((element) => element == 'clock_out')
+                        .isNotEmpty)
+                      EnableButton(
+                        text: '退勤する',
+                        onPressed: () =>
+                            registerTimeClock(AvailableType.clockOut),
+                        color: Colors.red,
+                      ),
+                  ],
+                ),
               ],
             ),
-          ],
+          ),
+          floatingActionButton: SpeedDial(
+              icon: Icons.settings,
+              activeIcon: Icons.close,
+              childPadding: const EdgeInsets.all(5),
+              spaceBetweenChildren: 4,
+              backgroundColor: Colors.grey[600],
+              children: [
+                SpeedDialChild(
+                  child: const Icon(Icons.cached),
+                  label: "更新",
+                  onTap: () => getAvailableTypes(),
+                ),
+                SpeedDialChild(
+                  child: const Icon(Icons.key),
+                  label: "トークンを登録する",
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterKeysPage())),
+                )
+              ]),
         ),
-      ),
-      floatingActionButton:
-          SpeedDial(icon: Icons.settings, activeIcon: Icons.close, children: [
-        SpeedDialChild(
-          child: const Icon(Icons.cached),
-          label: "更新",
-          onTap: () => getAvailableTypes(),
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.key),
-          label: "トークンを登録する",
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const RegisterKeysPage())),
-        )
-      ]),
+        if (_isLoading)
+          const Opacity(
+            opacity: 0.8,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
+          ),
+        if (_isLoading)
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+      ],
     );
   }
 }
