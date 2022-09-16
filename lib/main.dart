@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:desktop_window/desktop_window.dart';
+import 'package:freee_time_stamp/register_keys.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'buttons.dart';
 import 'enums.dart';
+
+class MenuItem {
+  String text;
+  Function action;
+
+  MenuItem({required this.text, required this.action});
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // String _refreshToken = '';
   String _employeeId = '';
   String _companyId = '';
+
+  final List<MenuItem> _menuItems = [MenuItem(text: 'キーを登録', action: () => {})];
 
   Future<void> getAvailableTypes() async {
     var url = Uri.https(
@@ -121,25 +131,24 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          PopupMenuButton(
+            icon: const Icon(Icons.settings),
+            itemBuilder: (BuildContext context) {
+              return _menuItems.map((MenuItem item) {
+                return PopupMenuItem(
+                  child: Text(item.text),
+                  onTap: () => item.action(),
+                );
+              }).toList();
+            },
+          )
+        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Container(
-            //   margin: const EdgeInsets.all(10),
-            //   child: Column(children: [
-            //     const Text(
-            //       '現在のステータス',
-            //       style: TextStyle(fontSize: 18),
-            //     ),
-            //     Text(
-            //       statusToString(_status),
-            //       style: const TextStyle(
-            //           fontSize: 32, fontWeight: FontWeight.bold),
-            //     ),
-            //   ]),
-            // ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -177,6 +186,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
               ],
             ),
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: EnableButton(
+                text: 'キーを登録する',
+                onPressed: () => {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterKeys()))
+                },
+              ),
+            )
           ],
         ),
       ),
