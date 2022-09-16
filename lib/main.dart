@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:desktop_window/desktop_window.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:freee_time_stamp/register_keys.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -186,25 +187,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 20),
-              child: EnableButton(
-                text: 'キーを登録する',
-                onPressed: () => {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterKeys()))
-                },
-              ),
-            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => getAvailableTypes(),
-        child: const Icon(Icons.cached),
-      ),
+      floatingActionButton:
+          SpeedDial(icon: Icons.settings, activeIcon: Icons.close, children: [
+        SpeedDialChild(
+          child: const Icon(Icons.cached),
+          label: "更新",
+          onTap: () => getAvailableTypes(),
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.key),
+          label: "キーを登録する",
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const RegisterKeys())),
+        )
+      ]),
     );
   }
 }
