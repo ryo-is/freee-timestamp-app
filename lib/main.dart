@@ -3,8 +3,9 @@ import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:freee_time_stamp/register_keys.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
+import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'buttons.dart';
 import 'enums.dart';
@@ -51,15 +52,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   List<dynamic> _availableTypes = [];
   String _accessToken = '';
-  // String _refreshToken = '';
+  String _refreshToken = '';
   String _employeeId = '';
   String _companyId = '';
-
-  final List<MenuItem> _menuItems = [MenuItem(text: 'キーを登録', action: () => {})];
+  String _clientId = '';
+  String _clientSecret = '';
 
   Future<void> getAvailableTypes() async {
+    await refreshAccessToken();
+
     var url = Uri.https(
         'api.freee.co.jp',
         '/hr/api/v1/employees/$_employeeId/time_clocks/available_types',
@@ -72,8 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
-      var jsonResponse =
-          convert.jsonDecode(response.body) as Map<String, dynamic>;
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       List<dynamic> availableTypes =
           jsonResponse['available_types'] as List<dynamic>;
       setState(() {
@@ -85,6 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> registerTimeClock(AvailableType type) async {
+    await refreshAccessToken();
+
     var url = Uri.https(
       'api.freee.co.jp',
       '/hr/api/v1/employees/$_employeeId/time_clocks',
@@ -95,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'accept': 'application/json',
       'FREEE-VERSION': '2022-02-01'
     };
-    String body = convert.json.encode({
+    String body = json.encode({
       'company_id': _companyId,
       'type': availableTypeToString(type),
     });
@@ -105,26 +111,65 @@ class _MyHomePageState extends State<MyHomePage> {
     await getAvailableTypes();
   }
 
+  Future<void> refreshAccessToken() async {
+    final SharedPreferences prefs = await _prefs;
+
+    var url = Uri.https(
+      'accounts.secure.freee.co.jp',
+      '/public_api/token',
+    );
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $_accessToken',
+      'content-type': 'application/x-www-form-urlencoded'
+    };
+    Object body = {
+      'grant_type': 'refresh_token',
+      'client_id': _clientId,
+      'client_secret': _clientSecret,
+      'refresh_token': _refreshToken,
+      'redirect_uri': 'ietf:wg:oauth:2.0:oob'
+    };
+
+    var response = await http.post(url, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      String accessToken = jsonResponse['access_token'] as String;
+      String refreshToken = jsonResponse['refresh_token'] as String;
+      setState(() {
+        _accessToken = accessToken;
+        _refreshToken = refreshToken;
+      });
+      await prefs.setString('accessToken', accessToken);
+      await prefs.setString('refreshToken', refreshToken);
+    } else {
+      throw ErrorDescription('error status: ${response.statusCode}.');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    setState(() {
-      _accessToken = dotenv.env['ACCESS_TOKEN'] != ''
-          ? dotenv.env['ACCESS_TOKEN'] as String
-          : '';
-      // _refreshToken = dotenv.env['REFRESH_TOKEN'] != ''
-      //     ? dotenv.env['REFRESH_TOKEN'] as String
-      //     : '';
-      _employeeId = dotenv.env['EMPLOYEE_ID'] != ''
-          ? dotenv.env['EMPLOYEE_ID'] as String
-          : '';
-      _companyId = dotenv.env['COMPANY_ID'] != ''
-          ? dotenv.env['COMPANY_ID'] as String
-          : '';
-    });
+    _prefs.then((SharedPreferences prefs) {
+      setState(() {
+        _accessToken = prefs.getString('accessToken') ?? '';
+        _refreshToken = prefs.getString('refreshToken') ?? '';
+        _employeeId = dotenv.env['EMPLOYEE_ID'] != ''
+            ? dotenv.env['EMPLOYEE_ID'] as String
+            : '';
+        _companyId = dotenv.env['COMPANY_ID'] != ''
+            ? dotenv.env['COMPANY_ID'] as String
+            : '';
+        _clientId = dotenv.env['CLIENT_ID'] != ''
+            ? dotenv.env['CLIENT_ID'] as String
+            : '';
+        _clientSecret = dotenv.env['CLIENT_SECRET'] != ''
+            ? dotenv.env['CLIENT_SECRET'] as String
+            : '';
+      });
 
-    getAvailableTypes();
+      getAvailableTypes();
+    });
   }
 
   @override
@@ -132,19 +177,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          PopupMenuButton(
-            icon: const Icon(Icons.settings),
-            itemBuilder: (BuildContext context) {
-              return _menuItems.map((MenuItem item) {
-                return PopupMenuItem(
-                  child: Text(item.text),
-                  onTap: () => item.action(),
-                );
-              }).toList();
-            },
-          )
-        ],
       ),
       body: Center(
         child: Column(
@@ -199,9 +231,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         SpeedDialChild(
           child: const Icon(Icons.key),
-          label: "キーを登録する",
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const RegisterKeys())),
+          label: "トークンを登録する",
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const RegisterKeysPage())),
         )
       ]),
     );
