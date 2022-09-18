@@ -11,6 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'buttons.dart';
 import 'enums.dart';
 
+final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
+
 class MenuItem {
   String text;
   Function action;
@@ -33,13 +35,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Freee 勤怠打刻アプリ',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Freee 勤怠打刻アプリ'),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Freee 勤怠打刻アプリ',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const MyHomePage(title: 'Freee 勤怠打刻アプリ'),
+        navigatorObservers: [routeObserver]);
   }
 }
 
@@ -52,7 +54,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with RouteAware {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   List<dynamic> _availableTypes = [];
@@ -231,10 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-
+  void init() {
     _prefs.then((SharedPreferences prefs) {
       setState(() {
         _accessToken = prefs.getString('accessToken') ?? '';
@@ -255,6 +254,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
       getAvailableTypes();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    init();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    init();
   }
 
   @override
