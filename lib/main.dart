@@ -13,13 +13,6 @@ import 'enums.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
-class MenuItem {
-  String text;
-  Function action;
-
-  MenuItem({required this.text, required this.action});
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
