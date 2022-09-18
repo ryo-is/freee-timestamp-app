@@ -1,17 +1,4 @@
-enum Status { working, workout, rest }
-
-String statusToString(Status status) {
-  switch (status) {
-    case Status.working:
-      return "出勤中";
-    case Status.workout:
-      return "退勤済";
-    case Status.rest:
-      return "休憩中";
-    default:
-      return "";
-  }
-}
+import 'package:flutter/material.dart';
 
 enum AvailableType { clockIn, breakBegin, breakEnd, clockOut }
 
@@ -25,5 +12,26 @@ String availableTypeToString(AvailableType type) {
       return 'break_end';
     case AvailableType.clockOut:
       return 'clock_out';
+  }
+}
+
+enum ResponseStatus { loading, success, error }
+
+Widget responseStatusIcon(ResponseStatus status) {
+  switch (status) {
+    case ResponseStatus.loading:
+      return const CircularProgressIndicator();
+    case ResponseStatus.success:
+      return const Icon(
+        Icons.done,
+        color: Colors.green,
+        size: 48,
+      );
+    case ResponseStatus.error:
+      return const Icon(
+        Icons.close,
+        color: Colors.red,
+        size: 48,
+      );
   }
 }

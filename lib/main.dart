@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -61,23 +62,59 @@ class _MyHomePageState extends State<MyHomePage> {
   String _companyId = '';
   String _clientId = '';
   String _clientSecret = '';
+
   bool _isLoading = false;
+  ResponseStatus _responseStatus = ResponseStatus.loading;
 
   void startLoading() {
     setState(() {
+      _responseStatus = ResponseStatus.loading;
       _isLoading = true;
     });
   }
 
-  void finishLoading() {
+  void finishLoading(ResponseStatus status) {
     setState(() {
-      _isLoading = false;
+      _responseStatus = status;
     });
+    Future.delayed(Duration(seconds: status == ResponseStatus.error ? 0 : 1))
+        .then((_) => {
+              setState(() {
+                _isLoading = false;
+              })
+            });
+  }
+
+  void showErrorDialog(String message) {
+    showDialog(
+        context: context,
+        builder: (_) => CupertinoAlertDialog(
+              title: const Text('エラーが発生しました'),
+              content: Text(message),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('閉じる'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ));
   }
 
   Future<void> getAvailableTypes() async {
     startLoading();
-    await refreshAccessToken();
+
+    if (_accessToken == '') {
+      finishLoading(ResponseStatus.error);
+      return;
+    }
+
+    bool ok = await refreshAccessToken();
+    if (!ok) {
+      finishLoading(ResponseStatus.error);
+      return;
+    }
 
     var url = Uri.https(
         'api.freee.co.jp',
@@ -98,15 +135,29 @@ class _MyHomePageState extends State<MyHomePage> {
         _availableTypes = availableTypes;
       });
     } else {
-      throw ErrorDescription('error status: ${response.statusCode}.');
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      String errorDescription = jsonResponse['error_description'] as String;
+      showErrorDialog(errorDescription);
+      finishLoading(ResponseStatus.error);
+      return;
     }
 
-    finishLoading();
+    finishLoading(ResponseStatus.success);
   }
 
   Future<void> registerTimeClock(AvailableType type) async {
     startLoading();
-    await refreshAccessToken();
+
+    if (_accessToken == '') {
+      finishLoading(ResponseStatus.error);
+      return;
+    }
+
+    bool ok = await refreshAccessToken();
+    if (!ok) {
+      finishLoading(ResponseStatus.error);
+      return;
+    }
 
     var url = Uri.https(
       'api.freee.co.jp',
@@ -123,13 +174,25 @@ class _MyHomePageState extends State<MyHomePage> {
       'type': availableTypeToString(type),
     });
 
-    await http.post(url, headers: headers, body: body);
+    var response = await http.post(url, headers: headers, body: body);
 
-    await getAvailableTypes();
-    finishLoading();
+    if (response.statusCode == 200) {
+      finishLoading(ResponseStatus.success);
+      await getAvailableTypes();
+    } else {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      String errorDescription = jsonResponse['error_description'] as String;
+      showErrorDialog(errorDescription);
+      finishLoading(ResponseStatus.error);
+      return;
+    }
   }
 
-  Future<void> refreshAccessToken() async {
+  Future<bool> refreshAccessToken() async {
+    if (_accessToken == '') {
+      return false;
+    }
+
     final SharedPreferences prefs = await _prefs;
 
     var url = Uri.https(
@@ -159,8 +222,12 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       await prefs.setString('accessToken', accessToken);
       await prefs.setString('refreshToken', refreshToken);
+      return true;
     } else {
-      throw ErrorDescription('error status: ${response.statusCode}.');
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      String errorDescription = jsonResponse['error_description'] as String;
+      showErrorDialog(errorDescription);
+      return false;
     }
   }
 
@@ -272,8 +339,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ModalBarrier(dismissible: false, color: Colors.black),
           ),
         if (_isLoading)
-          const Center(
-            child: CircularProgressIndicator(),
+          Center(
+            child: responseStatusIcon(_responseStatus),
           ),
       ],
     );
