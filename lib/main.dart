@@ -342,18 +342,20 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
               backgroundColor: Colors.grey[600],
               children: [
                 SpeedDialChild(
-                  child: const Icon(Icons.cached),
-                  label: "更新",
-                  onTap: () => getAvailableTypes(),
-                ),
+                    child: const Icon(Icons.cached),
+                    label: "更新",
+                    onTap: () => getAvailableTypes(),
+                    foregroundColor: Colors.grey[800],
+                    labelStyle: TextStyle(color: Colors.grey[800])),
                 SpeedDialChild(
-                  child: const Icon(Icons.key),
-                  label: "トークンを登録する",
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterKeysPage())),
-                )
+                    child: const Icon(Icons.key),
+                    label: "トークンを登録する",
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterKeysPage())),
+                    foregroundColor: Colors.grey[800],
+                    labelStyle: TextStyle(color: Colors.grey[800]))
               ]),
         ),
         if (_isLoading)
