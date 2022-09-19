@@ -1,16 +1,37 @@
 # freee_time_stamp
 
-A new Flutter project.
+This app is attendance recording app for '人事労務Freee'
 
-## Getting Started
+## Environment
 
-This project is a starting point for a Flutter application.
+1. Dounload Flutter -> https://docs.flutter.dev/get-started/install
+2. Install dependencies
 
-A few resources to get you started if this is your first Flutter project:
+```
+$ fultter pub get
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+3. create  `.env.development`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+$ cp .env.sample .env.development
+```
+
+4. Install extentions for VS Code -> https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter
+5. Run Debug
+   1. Run -> Start Debugging
+   2. Select 'Dart&Flutter'
+
+## Create FreeeAPI
+
+1. Create Application -> https://developer.freee.co.jp/startguide/starting-api
+   1. The permissions required by the app are '\[人事労務\] 打刻 参照' & '\[人事労務\] 打刻 更新'
+2. Get AccessToken & RefereshToken -> https://developer.freee.co.jp/reference
+
+## Build
+
+Run the command below
+
+```
+$ flutter build macos (or windows)
+```
