@@ -17,8 +17,20 @@ $ fultter pub get
 $ cp .env.sample .env.development
 ```
 
-4. Install extentions for VS Code -> https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter
-5. Run Debug
+4. Set env values
+
+Invoke get login user API
+https://developer.freee.co.jp/reference/hr/reference#operations-tag-ログインユーザ
+
+```
+CLIENT_ID=
+CLIENT_SECRET=
+COMPANY_ID=
+EMPLOYEE_ID=
+```
+
+1. Install extentions for VS Code -> https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter
+2. Run Debug
    1. Run -> Start Debugging
    2. Select 'Dart&Flutter'
 

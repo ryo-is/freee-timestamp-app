@@ -6,12 +6,20 @@ import 'package:freee_time_stamp/register_keys.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'buttons.dart';
 import 'enums.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
+
+class TimeClock {
+  String type = '';
+  String datetime = '';
+
+  TimeClock({required this.type, required this.datetime});
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   List<dynamic> _availableTypes = [];
+  TimeClock _timeClock = TimeClock(type: 'まだ打刻していません', datetime: '');
   String _accessToken = '';
   String _refreshToken = '';
   String _employeeId = '';
@@ -78,6 +87,21 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                 _isLoading = false;
               })
             });
+  }
+
+  String convertAvailableTypeToString(String type) {
+    switch (type) {
+      case ('clock_in'):
+        return '出勤';
+      case ('break_begin'):
+        return '休憩開始';
+      case ('break_end'):
+        return '休憩終了';
+      case ('clock_out'):
+        return '退勤';
+      default:
+        return 'まだ打刻していません';
+    }
   }
 
   void showErrorDialog(String message) {
@@ -130,6 +154,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       setState(() {
         _availableTypes = availableTypes;
       });
+
+      await getTimeClocks();
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       String errorDescription = jsonResponse['error_description'] as String;
@@ -173,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
     var response = await http.post(url, headers: headers, body: body);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       finishLoading(ResponseStatus.success);
       await getAvailableTypes();
     } else {
@@ -183,6 +209,57 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       finishLoading(ResponseStatus.error);
       return;
     }
+  }
+
+  Future<void> getTimeClocks() async {
+    startLoading();
+
+    if (_accessToken == '') {
+      finishLoading(ResponseStatus.error);
+      showErrorDialog('アクセストークンを登録してください');
+      return;
+    }
+
+    bool ok = await refreshAccessToken();
+    if (!ok) {
+      finishLoading(ResponseStatus.error);
+      return;
+    }
+
+    var url = Uri.https(
+        'api.freee.co.jp',
+        '/hr/api/v1/employees/$_employeeId/time_clocks',
+        {'company_id': _companyId});
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $_accessToken',
+      'accept': 'application/json',
+      'FREEE-VERSION': '2022-02-01'
+    };
+
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as List<dynamic>;
+      if (jsonResponse.isNotEmpty) {
+        var lastTimeClock = jsonResponse.last;
+        final formatter = DateFormat('yyyy/MM/dd(E) HH:mm');
+        DateTime datetime = DateTime.parse(lastTimeClock['datetime']);
+        String formatDate = formatter.format(datetime);
+        TimeClock timeClock = TimeClock(
+            type: convertAvailableTypeToString(lastTimeClock['type']),
+            datetime: formatDate);
+        setState(() {
+          _timeClock = timeClock;
+        });
+      }
+    } else {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      String errorDescription = jsonResponse['error_description'] as String;
+      showErrorDialog(errorDescription);
+      finishLoading(ResponseStatus.error);
+      return;
+    }
+
+    finishLoading(ResponseStatus.success);
   }
 
   Future<bool> refreshAccessToken() async {
@@ -291,6 +368,20 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Text(
+                        _timeClock.type,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        _timeClock.datetime,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
                     if (_availableTypes
                         .where((element) => element == 'clock_in')
                         .isNotEmpty)
