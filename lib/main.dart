@@ -92,13 +92,13 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   String convertAvailableTypeToString(String type) {
     switch (type) {
       case ('clock_in'):
-        return '出勤';
+        return '勤務中';
       case ('break_begin'):
-        return '休憩開始';
+        return '休憩中';
       case ('break_end'):
-        return '休憩終了';
+        return '勤務中';
       case ('clock_out'):
-        return '退勤';
+        return '退勤済';
       default:
         return 'まだ打刻していません';
     }
@@ -242,7 +242,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       if (jsonResponse.isNotEmpty) {
         var lastTimeClock = jsonResponse.last;
         final formatter = DateFormat('yyyy/MM/dd(E) HH:mm');
-        DateTime datetime = DateTime.parse(lastTimeClock['datetime']);
+        DateTime datetime = DateTime.parse(lastTimeClock['datetime'])
+            .add(const Duration(hours: 9));
         String formatDate = formatter.format(datetime);
         TimeClock timeClock = TimeClock(
             type: convertAvailableTypeToString(lastTimeClock['type']),
@@ -368,18 +369,16 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Text(
+                      '現在のステータス',
+                      style: TextStyle(fontSize: 16),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Text(
                         _timeClock.type,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(
-                        _timeClock.datetime,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
                     if (_availableTypes
@@ -393,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .where((element) => element == 'break_begin')
                         .isNotEmpty)
                       EnableButton(
-                        text: '休憩する',
+                        text: '休憩開始',
                         onPressed: () =>
                             registerTimeClock(AvailableType.breakBegin),
                         color: Colors.green,
@@ -402,7 +401,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .where((element) => element == 'break_end')
                         .isNotEmpty)
                       EnableButton(
-                        text: '休憩から戻る',
+                        text: '休憩終了',
                         onPressed: () =>
                             registerTimeClock(AvailableType.breakEnd),
                         color: Colors.green,
