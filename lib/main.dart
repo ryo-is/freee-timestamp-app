@@ -102,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
     if (_accessToken == '') {
       finishLoading(ResponseStatus.error);
+      showErrorDialog('アクセストークンを登録してください');
       return;
     }
 
@@ -145,6 +146,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
     if (_accessToken == '') {
       finishLoading(ResponseStatus.error);
+      showErrorDialog('アクセストークンを登録してください');
       return;
     }
 
@@ -185,6 +187,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
   Future<bool> refreshAccessToken() async {
     if (_accessToken == '') {
+      showErrorDialog('アクセストークンを登録してください');
       return false;
     }
 
