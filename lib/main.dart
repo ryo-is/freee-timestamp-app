@@ -21,6 +21,13 @@ class TimeClock {
   TimeClock({required this.type, required this.datetime});
 }
 
+class ResponseObject {
+  bool ok = true;
+  String message = '';
+
+  ResponseObject({required this.ok, required this.message});
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -70,6 +77,21 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   bool _isLoading = false;
   ResponseStatus _responseStatus = ResponseStatus.loading;
 
+  String convertAvailableTypeToString(String type) {
+    switch (type) {
+      case ('clock_in'):
+        return '勤務中';
+      case ('break_begin'):
+        return '休憩中';
+      case ('break_end'):
+        return '勤務中';
+      case ('clock_out'):
+        return '退勤済';
+      default:
+        return 'まだ打刻していません';
+    }
+  }
+
   void startLoading() {
     setState(() {
       _responseStatus = ResponseStatus.loading;
@@ -89,21 +111,6 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             });
   }
 
-  String convertAvailableTypeToString(String type) {
-    switch (type) {
-      case ('clock_in'):
-        return '勤務中';
-      case ('break_begin'):
-        return '休憩中';
-      case ('break_end'):
-        return '勤務中';
-      case ('clock_out'):
-        return '退勤済';
-      default:
-        return 'まだ打刻していません';
-    }
-  }
-
   void showErrorDialog(String message) {
     showDialog(
         context: context,
@@ -121,21 +128,34 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             ));
   }
 
-  Future<void> getAvailableTypes() async {
+  Future<bool> apiWrapper(Function function, dynamic arg) async {
     startLoading();
 
     if (_accessToken == '') {
       finishLoading(ResponseStatus.error);
       showErrorDialog('アクセストークンを登録してください');
-      return;
+      return false;
     }
 
-    bool ok = await refreshAccessToken();
-    if (!ok) {
+    ResponseObject refreshTokenResponse = await refreshAccessToken();
+    if (!refreshTokenResponse.ok) {
       finishLoading(ResponseStatus.error);
-      return;
+      showErrorDialog(refreshTokenResponse.message);
+      return false;
     }
 
+    ResponseObject res = (arg != null) ? await function(arg) : await function();
+    if (!res.ok) {
+      finishLoading(ResponseStatus.error);
+      showErrorDialog(res.message);
+      return false;
+    }
+
+    finishLoading(ResponseStatus.success);
+    return true;
+  }
+
+  Future<ResponseObject> getAvailableTypes() async {
     var url = Uri.https(
         'api.freee.co.jp',
         '/hr/api/v1/employees/$_employeeId/time_clocks/available_types',
@@ -155,77 +175,20 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
         _availableTypes = availableTypes;
       });
 
-      await getTimeClocks();
+      ResponseObject res = await getTimeClocks();
+      if (!res.ok) {
+        return ResponseObject(ok: false, message: res.message);
+      }
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       String errorDescription = jsonResponse['error_description'] as String;
-      showErrorDialog(errorDescription);
-      finishLoading(ResponseStatus.error);
-      return;
+      return ResponseObject(ok: false, message: errorDescription);
     }
 
-    finishLoading(ResponseStatus.success);
+    return ResponseObject(ok: true, message: '');
   }
 
-  Future<void> registerTimeClock(AvailableType type) async {
-    startLoading();
-
-    if (_accessToken == '') {
-      finishLoading(ResponseStatus.error);
-      showErrorDialog('アクセストークンを登録してください');
-      return;
-    }
-
-    bool ok = await refreshAccessToken();
-    if (!ok) {
-      finishLoading(ResponseStatus.error);
-      return;
-    }
-
-    var url = Uri.https(
-      'api.freee.co.jp',
-      '/hr/api/v1/employees/$_employeeId/time_clocks',
-    );
-    Map<String, String> headers = {
-      'Authorization': 'Bearer $_accessToken',
-      'content-type': 'application/json',
-      'accept': 'application/json',
-      'FREEE-VERSION': '2022-02-01'
-    };
-    String body = json.encode({
-      'company_id': _companyId,
-      'type': availableTypeToString(type),
-    });
-
-    var response = await http.post(url, headers: headers, body: body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      finishLoading(ResponseStatus.success);
-      await getAvailableTypes();
-    } else {
-      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-      String errorDescription = jsonResponse['error_description'] as String;
-      showErrorDialog(errorDescription);
-      finishLoading(ResponseStatus.error);
-      return;
-    }
-  }
-
-  Future<void> getTimeClocks() async {
-    startLoading();
-
-    if (_accessToken == '') {
-      finishLoading(ResponseStatus.error);
-      showErrorDialog('アクセストークンを登録してください');
-      return;
-    }
-
-    bool ok = await refreshAccessToken();
-    if (!ok) {
-      finishLoading(ResponseStatus.error);
-      return;
-    }
-
+  Future<ResponseObject> getTimeClocks() async {
     var url = Uri.https(
         'api.freee.co.jp',
         '/hr/api/v1/employees/$_employeeId/time_clocks',
@@ -255,20 +218,45 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       String errorDescription = jsonResponse['error_description'] as String;
-      showErrorDialog(errorDescription);
-      finishLoading(ResponseStatus.error);
-      return;
+      return ResponseObject(ok: false, message: errorDescription);
     }
 
-    finishLoading(ResponseStatus.success);
+    return ResponseObject(ok: true, message: '');
   }
 
-  Future<bool> refreshAccessToken() async {
-    if (_accessToken == '') {
-      showErrorDialog('アクセストークンを登録してください');
-      return false;
+  Future<ResponseObject> registerTimeClock(AvailableType type) async {
+    var url = Uri.https(
+      'api.freee.co.jp',
+      '/hr/api/v1/employees/$_employeeId/time_clocks',
+    );
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $_accessToken',
+      'content-type': 'application/json',
+      'accept': 'application/json',
+      'FREEE-VERSION': '2022-02-01'
+    };
+    String body = json.encode({
+      'company_id': _companyId,
+      'type': availableTypeToString(type),
+    });
+
+    var response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      ResponseObject res = await getAvailableTypes();
+      if (!res.ok) {
+        return ResponseObject(ok: false, message: res.message);
+      }
+    } else {
+      var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      String errorDescription = jsonResponse['error_description'] as String;
+      return ResponseObject(ok: false, message: errorDescription);
     }
 
+    return ResponseObject(ok: true, message: '');
+  }
+
+  Future<ResponseObject> refreshAccessToken() async {
     final SharedPreferences prefs = await _prefs;
 
     var url = Uri.https(
@@ -298,12 +286,11 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       });
       await prefs.setString('accessToken', accessToken);
       await prefs.setString('refreshToken', refreshToken);
-      return true;
+      return ResponseObject(ok: true, message: '');
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       String errorDescription = jsonResponse['error_description'] as String;
-      showErrorDialog(errorDescription);
-      return false;
+      return ResponseObject(ok: false, message: errorDescription);
     }
   }
 
@@ -326,7 +313,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             : '';
       });
 
-      getAvailableTypes();
+      apiWrapper(getAvailableTypes, null);
+      return;
     });
   }
 
@@ -334,7 +322,11 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    init();
+    try {
+      init();
+    } catch (e) {
+      throw Error();
+    }
   }
 
   @override
@@ -385,16 +377,17 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .where((element) => element == 'clock_in')
                         .isNotEmpty)
                       EnableButton(
-                          text: '出勤する',
-                          onPressed: () =>
-                              registerTimeClock(AvailableType.clockIn)),
+                        text: '出勤する',
+                        onPressed: () => apiWrapper(
+                            registerTimeClock, AvailableType.clockIn),
+                      ),
                     if (_availableTypes
                         .where((element) => element == 'break_begin')
                         .isNotEmpty)
                       EnableButton(
                         text: '休憩開始',
-                        onPressed: () =>
-                            registerTimeClock(AvailableType.breakBegin),
+                        onPressed: () => apiWrapper(
+                            registerTimeClock, AvailableType.breakBegin),
                         color: Colors.green,
                       ),
                     if (_availableTypes
@@ -402,8 +395,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .isNotEmpty)
                       EnableButton(
                         text: '休憩終了',
-                        onPressed: () =>
-                            registerTimeClock(AvailableType.breakEnd),
+                        onPressed: () => apiWrapper(
+                            registerTimeClock, AvailableType.breakEnd),
                         color: Colors.green,
                       ),
                     if (_availableTypes
@@ -411,8 +404,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .isNotEmpty)
                       EnableButton(
                         text: '退勤する',
-                        onPressed: () =>
-                            registerTimeClock(AvailableType.clockOut),
+                        onPressed: () => apiWrapper(
+                            registerTimeClock, AvailableType.clockOut),
                         color: Colors.red,
                       ),
                   ],
@@ -430,7 +423,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                 SpeedDialChild(
                     child: const Icon(Icons.cached),
                     label: "更新",
-                    onTap: () => getAvailableTypes(),
+                    onTap: () => apiWrapper(getAvailableTypes, null),
                     foregroundColor: Colors.grey[800],
                     labelStyle: TextStyle(color: Colors.grey[800])),
                 SpeedDialChild(
