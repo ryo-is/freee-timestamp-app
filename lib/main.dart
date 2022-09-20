@@ -131,31 +131,31 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             ));
   }
 
-  Future<bool> apiWrapper(Function function, dynamic arg) async {
+  Future<void> apiWrapper(Function function, dynamic arg) async {
     startLoading();
 
     if (_accessToken == '') {
       finishLoading(ResponseStatus.error);
       showErrorDialog('アクセストークンを登録してください');
-      return false;
+      return;
     }
 
     ResponseObject refreshTokenResponse = await refreshAccessToken();
     if (!refreshTokenResponse.ok) {
       finishLoading(ResponseStatus.error);
       showErrorDialog(refreshTokenResponse.message);
-      return false;
+      return;
     }
 
     ResponseObject res = (arg != null) ? await function(arg) : await function();
     if (!res.ok) {
       finishLoading(ResponseStatus.error);
       showErrorDialog(res.message);
-      return false;
+      return;
     }
 
     finishLoading(ResponseStatus.success);
-    return true;
+    return;
   }
 
   Future<ResponseObject> getAvailableTypes() async {
