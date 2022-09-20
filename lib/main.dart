@@ -16,9 +16,11 @@ final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
 class TimeClock {
   String type = '';
+  String typeString = '';
   String datetime = '';
 
-  TimeClock({required this.type, required this.datetime});
+  TimeClock(
+      {required this.type, required this.typeString, required this.datetime});
 }
 
 class ResponseObject {
@@ -66,7 +68,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   List<dynamic> _availableTypes = [];
-  TimeClock _timeClock = TimeClock(type: 'まだ打刻していません', datetime: '');
+  TimeClock _timeClock =
+      TimeClock(type: 'none', typeString: 'まだ打刻していません', datetime: '');
   String _accessToken = '';
   String _refreshToken = '';
   String _employeeId = '';
@@ -208,8 +211,10 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
         DateTime datetime = DateTime.parse(lastTimeClock['datetime'])
             .add(const Duration(hours: 9));
         String formatDate = formatter.format(datetime);
+        String type = lastTimeClock['type'];
         TimeClock timeClock = TimeClock(
-            type: convertAvailableTypeToString(lastTimeClock['type']),
+            type: type,
+            typeString: convertAvailableTypeToString(lastTimeClock['type']),
             datetime: formatDate);
         setState(() {
           _timeClock = timeClock;
@@ -368,7 +373,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Text(
-                        _timeClock.type,
+                        _timeClock.typeString,
                         style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
@@ -400,8 +405,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         color: Colors.green,
                       ),
                     if (_availableTypes
-                        .where((element) => element == 'clock_out')
-                        .isNotEmpty)
+                            .where((element) => element == 'clock_out')
+                            .isNotEmpty &&
+                        _timeClock.type != 'clock_out')
                       EnableButton(
                         text: '退勤する',
                         onPressed: () => apiWrapper(
