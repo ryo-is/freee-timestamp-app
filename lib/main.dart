@@ -30,6 +30,13 @@ class ResponseObject {
   ResponseObject({required this.ok, required this.message});
 }
 
+class WrappedAPIObject<T> {
+  Function function = () {};
+  final T? arg;
+
+  WrappedAPIObject({required this.function, this.arg});
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -131,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             ));
   }
 
-  Future<void> apiWrapper(Function function, dynamic arg) async {
+  Future<void> apiWrapper<T>(WrappedAPIObject<T> object) async {
     startLoading();
 
     if (_accessToken == '') {
@@ -147,7 +154,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       return;
     }
 
-    ResponseObject res = (arg != null) ? await function(arg) : await function();
+    ResponseObject res = (object.arg != null)
+        ? await object.function(object.arg)
+        : await object.function();
     if (!res.ok) {
       finishLoading(ResponseStatus.error);
       showErrorDialog(res.message);
@@ -318,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             : '';
       });
 
-      apiWrapper(getAvailableTypes, null);
+      apiWrapper(WrappedAPIObject(function: getAvailableTypes));
       return;
     });
   }
@@ -383,16 +392,18 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .isNotEmpty)
                       EnableButton(
                         text: '出勤する',
-                        onPressed: () => apiWrapper(
-                            registerTimeClock, AvailableType.clockIn),
+                        onPressed: () => apiWrapper(WrappedAPIObject(
+                            function: registerTimeClock,
+                            arg: AvailableType.clockIn)),
                       ),
                     if (_availableTypes
                         .where((element) => element == 'break_begin')
                         .isNotEmpty)
                       EnableButton(
                         text: '休憩開始',
-                        onPressed: () => apiWrapper(
-                            registerTimeClock, AvailableType.breakBegin),
+                        onPressed: () => apiWrapper(WrappedAPIObject(
+                            function: registerTimeClock,
+                            arg: AvailableType.breakBegin)),
                         color: Colors.green,
                       ),
                     if (_availableTypes
@@ -400,8 +411,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         .isNotEmpty)
                       EnableButton(
                         text: '休憩終了',
-                        onPressed: () => apiWrapper(
-                            registerTimeClock, AvailableType.breakEnd),
+                        onPressed: () => apiWrapper(WrappedAPIObject(
+                            function: registerTimeClock,
+                            arg: AvailableType.breakEnd)),
                         color: Colors.green,
                       ),
                     if (_availableTypes
@@ -410,8 +422,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                         _timeClock.type != 'clock_out')
                       EnableButton(
                         text: '退勤する',
-                        onPressed: () => apiWrapper(
-                            registerTimeClock, AvailableType.clockOut),
+                        onPressed: () => apiWrapper(WrappedAPIObject(
+                            function: registerTimeClock,
+                            arg: AvailableType.clockOut)),
                         color: Colors.red,
                       ),
                   ],
@@ -429,7 +442,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                 SpeedDialChild(
                     child: const Icon(Icons.cached),
                     label: "更新",
-                    onTap: () => apiWrapper(getAvailableTypes, null),
+                    onTap: () => apiWrapper(
+                        WrappedAPIObject(function: getAvailableTypes)),
                     foregroundColor: Colors.grey[800],
                     labelStyle: TextStyle(color: Colors.grey[800])),
                 SpeedDialChild(
