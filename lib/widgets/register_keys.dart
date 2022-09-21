@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:freee_time_stamp/buttons.dart';
+import 'package:freee_time_stamp/widgets/buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './main.dart';
+import '../main.dart';
 
 class RegisterKeysPage extends StatefulWidget {
   const RegisterKeysPage({super.key});
