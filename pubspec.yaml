@@ -37,7 +37,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   desktop_window: ^0.4.0
   http: ^0.13.5
-  flutter_dotenv: ^5.0.2
   flutter_speed_dial: ^6.0.0
   shared_preferences: ^2.0.15
   intl: ^0.17.0
@@ -93,6 +92,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-
-  assets:
-    - .env.development

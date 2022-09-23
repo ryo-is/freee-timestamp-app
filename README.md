@@ -8,7 +8,7 @@ This app is attendance recording app for '人事労務Freee'
    1. The permissions required by the app are '\[人事労務\] 打刻 参照' & '\[人事労務\] 打刻 更新'
 2. Get AccessToken & RefereshToken -> https://developer.freee.co.jp/reference
 
-## Environment
+## Debug
 
 1. Dounload Flutter -> https://docs.flutter.dev/get-started/install
 2. Install dependencies

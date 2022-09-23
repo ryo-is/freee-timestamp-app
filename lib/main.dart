@@ -5,7 +5,6 @@ import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:freee_time_stamp/widgets/user_info.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,7 +40,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await DesktopWindow.setWindowSize(const Size(450, 600));
-  await dotenv.load(fileName: '.env.development');
 
   runApp(const MyApp());
 }
