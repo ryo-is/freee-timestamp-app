@@ -328,7 +328,6 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       });
 
       apiWrapper(WrappedAPIObject(function: getAvailableTypes));
-      return;
     });
   }
 
@@ -336,11 +335,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    try {
-      init();
-    } catch (e) {
-      throw Error();
-    }
+    init();
   }
 
   @override
