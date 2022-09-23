@@ -177,208 +177,211 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
                               )
                             ]
                           : [
-                              Table(
-                                columnWidths: const <int, TableColumnWidth>{
-                                  0: IntrinsicColumnWidth(),
-                                  1: FlexColumnWidth(),
-                                },
-                                defaultVerticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                children: [
-                                  TableRow(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color:
-                                                      Colors.grey.shade500))),
-                                      children: [
-                                        const TableCell(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(bottom: 8),
-                                          child: Text(
-                                            'EmployeeID',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        )),
-                                        TableCell(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, bottom: 8),
-                                          child: Text(
-                                            _employeeId,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        )),
-                                      ]),
-                                  TableRow(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color:
-                                                      Colors.grey.shade500))),
-                                      children: [
-                                        const TableCell(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 8, top: 8),
-                                          child: Text(
-                                            'CompanyID',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        )),
-                                        TableCell(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, bottom: 8, top: 8),
-                                          child: Text(
-                                            _companyId,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        )),
-                                      ]),
-                                  TableRow(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color:
-                                                      Colors.grey.shade500))),
-                                      children: [
-                                        const TableCell(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 8, top: 8),
-                                          child: Text(
-                                            'ClientID',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        )),
-                                        TableCell(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, bottom: 8, top: 8),
-                                          child: Text(
-                                            _clientId,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        )),
-                                      ]),
-                                  TableRow(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color:
-                                                      Colors.grey.shade500))),
-                                      children: [
-                                        const TableCell(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 8, top: 8),
-                                          child: Text(
-                                            'ClientSecret',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        )),
-                                        TableCell(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, bottom: 8, top: 8),
-                                          child: Text(
-                                            _clientSecret,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        )),
-                                      ]),
-                                  TableRow(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color:
-                                                      Colors.grey.shade500))),
-                                      children: [
-                                        const TableCell(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 8, top: 8),
-                                          child: Text(
-                                            'AccessToken',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        )),
-                                        TableCell(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, bottom: 8, top: 8),
-                                          child: Text(
-                                            _accessToken,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        )),
-                                      ]),
-                                  TableRow(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color:
-                                                      Colors.grey.shade500))),
-                                      children: [
-                                        const TableCell(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 8, top: 8),
-                                          child: Text(
-                                            'RefreshToken',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        )),
-                                        TableCell(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 18, bottom: 8, top: 8),
-                                          child: Text(
-                                            _refreshToken,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        )),
-                                      ])
-                                ],
+                              Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade500))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'EmployeeID',
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, left: 8, right: 8),
+                                      child: Text(
+                                        _employeeId,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade500))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'CompanyID',
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, left: 8, right: 8),
+                                      child: Text(
+                                        _companyId,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade500))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'ClientID',
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, left: 8, right: 8),
+                                      child: Text(
+                                        _clientId,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade500))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'ClientSecret',
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, left: 8, right: 8),
+                                      child: Text(
+                                        _clientSecret,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade500))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'AccessToken',
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, left: 8, right: 8),
+                                      child: Text(
+                                        _accessToken,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 8),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Colors.grey.shade500))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                        'RefreshToken',
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, left: 8, right: 8),
+                                      child: Text(
+                                        _refreshToken,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: const EdgeInsets.only(top: 12),
