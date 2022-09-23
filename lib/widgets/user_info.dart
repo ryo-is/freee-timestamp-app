@@ -21,23 +21,9 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
   String _accessToken = '';
   String _refreshToken = '';
 
-  bool _isLoading = false;
   bool _isEdit = false;
 
-  void startLoading() {
-    setState(() {
-      _isLoading = true;
-    });
-  }
-
-  void finishLoading() {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   void saveToSharedPreferences() async {
-    startLoading();
     SharedPreferences prefs = await _prefs;
 
     prefs.setString('employeeId', _employeeId);
@@ -50,7 +36,6 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
     setState(() {
       _isEdit = false;
     });
-    finishLoading();
   }
 
   @override
@@ -405,15 +390,6 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
                               )
                             ])),
             )),
-        if (_isLoading)
-          const Opacity(
-            opacity: 0.8,
-            child: ModalBarrier(dismissible: false, color: Colors.black),
-          ),
-        if (_isLoading)
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
       ],
     );
   }
