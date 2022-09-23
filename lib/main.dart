@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:freee_time_stamp/widgets/register_keys.dart';
+import 'package:freee_time_stamp/widgets/user_info.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
@@ -311,20 +311,12 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   void init() {
     _prefs.then((SharedPreferences prefs) {
       setState(() {
+        _employeeId = prefs.getString('employeeId') ?? '';
+        _companyId = prefs.getString('companyId') ?? '';
+        _clientId = prefs.getString('clientId') ?? '';
+        _clientSecret = prefs.getString('clientSecret') ?? '';
         _accessToken = prefs.getString('accessToken') ?? '';
         _refreshToken = prefs.getString('refreshToken') ?? '';
-        _employeeId = dotenv.env['EMPLOYEE_ID'] != ''
-            ? dotenv.env['EMPLOYEE_ID'] as String
-            : '';
-        _companyId = dotenv.env['COMPANY_ID'] != ''
-            ? dotenv.env['COMPANY_ID'] as String
-            : '';
-        _clientId = dotenv.env['CLIENT_ID'] != ''
-            ? dotenv.env['CLIENT_ID'] as String
-            : '';
-        _clientSecret = dotenv.env['CLIENT_SECRET'] != ''
-            ? dotenv.env['CLIENT_SECRET'] as String
-            : '';
       });
 
       apiWrapper(WrappedAPIObject(function: getAvailableTypes));
@@ -442,12 +434,12 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                     foregroundColor: Colors.grey[800],
                     labelStyle: TextStyle(color: Colors.grey[800])),
                 SpeedDialChild(
-                    child: const Icon(Icons.key),
-                    label: "トークンを登録する",
+                    child: const Icon(Icons.person),
+                    label: "ユーザー情報",
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const RegisterKeysPage())),
+                            builder: (context) => const UserInfoPage())),
                     foregroundColor: Colors.grey[800],
                     labelStyle: TextStyle(color: Colors.grey[800]))
               ]),
