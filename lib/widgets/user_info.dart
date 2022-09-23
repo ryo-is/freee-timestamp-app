@@ -169,12 +169,6 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
                                       },
                                     ),
                                   ]),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: EnableButton(
-                                    text: '登録する',
-                                    onPressed: () => saveToSharedPreferences()),
-                              )
                             ]
                           : [
                               Container(
@@ -383,16 +377,22 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
                                   ],
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: EnableButton(
-                                    text: '修正する',
-                                    onPressed: () => setState(() {
-                                          _isEdit = true;
-                                        })),
-                              )
                             ])),
-            )),
+            ),
+            floatingActionButton: FloatingActionButton(
+                backgroundColor: _isEdit ? Colors.green : Colors.blue,
+                child:
+                    _isEdit ? const Icon(Icons.check) : const Icon(Icons.edit),
+                onPressed: () => {
+                      if (_isEdit)
+                        {saveToSharedPreferences()}
+                      else
+                        {
+                          setState(() {
+                            _isEdit = true;
+                          })
+                        }
+                    })),
       ],
     );
   }
