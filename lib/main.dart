@@ -141,9 +141,24 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   Future<void> apiWrapper<T>(WrappedAPIObject<T> object) async {
     startLoading();
 
+    if (_employeeId == '' ||
+        _companyId == '' ||
+        _clientId == '' ||
+        _clientSecret == '') {
+      finishLoading(ResponseStatus.error);
+      showErrorDialog('ユーザー情報を登録してください');
+      return;
+    }
+
     if (_accessToken == '') {
       finishLoading(ResponseStatus.error);
       showErrorDialog('アクセストークンを登録してください');
+      return;
+    }
+
+    if (_refreshToken == '') {
+      finishLoading(ResponseStatus.error);
+      showErrorDialog('リフレッシュトークンを登録してください');
       return;
     }
 
