@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freee_time_stamp/widgets/buttons.dart';
+import 'package:freee_time_stamp/widgets/use_info_box.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
@@ -74,9 +75,10 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
             ),
             body: Center(
               child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 32),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
                   child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: _isEdit
                           ? [
                               Column(
@@ -171,211 +173,35 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
                                   ]),
                             ]
                           : [
-                              Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade500))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        'EmployeeID',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, left: 8, right: 8),
-                                      child: Text(
-                                        _employeeId,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              UserInfoBox(
+                                label: 'EmployeeID',
+                                value: _employeeId,
+                                bgColor: Colors.grey.shade300,
                               ),
-                              Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade500))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        'CompanyID',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, left: 8, right: 8),
-                                      child: Text(
-                                        _companyId,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              UserInfoBox(
+                                label: 'CompanyID',
+                                value: _companyId,
+                                bgColor: Colors.grey.shade200,
                               ),
-                              Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade500))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        'ClientID',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, left: 8, right: 8),
-                                      child: Text(
-                                        _clientId,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              UserInfoBox(
+                                label: 'ClientID',
+                                value: _clientId,
+                                bgColor: Colors.grey.shade300,
                               ),
-                              Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade500))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        'ClientSecret',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, left: 8, right: 8),
-                                      child: Text(
-                                        _clientSecret,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              UserInfoBox(
+                                label: 'ClientSecret',
+                                value: _clientSecret,
+                                bgColor: Colors.grey.shade200,
                               ),
-                              Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade500))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        'AccessToken',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, left: 8, right: 8),
-                                      child: Text(
-                                        _accessToken,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              UserInfoBox(
+                                label: 'AccessToken',
+                                value: _accessToken,
+                                bgColor: Colors.grey.shade300,
                               ),
-                              Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Colors.grey.shade500))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                        'RefreshToken',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                            fontSize: 12),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, left: 8, right: 8),
-                                      child: Text(
-                                        _refreshToken,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              UserInfoBox(
+                                label: 'RefreshToken',
+                                value: _refreshToken,
+                                bgColor: Colors.grey.shade200,
                               ),
                             ])),
             ),
