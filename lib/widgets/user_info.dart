@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freee_time_stamp/widgets/buttons.dart';
 import 'package:freee_time_stamp/widgets/use_info_box.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
