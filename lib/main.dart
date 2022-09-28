@@ -84,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   String _clientSecret = '';
 
   bool _isLoading = false;
+  bool _isNeedRetry = true;
   ResponseStatus _responseStatus = ResponseStatus.loading;
 
   String convertAvailableTypeToString(String type) {
@@ -121,6 +122,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   }
 
   void showErrorDialog(String message) {
+    setState(() {
+      _isNeedRetry = false;
+    });
     showDialog(
         context: context,
         builder: (_) => CupertinoAlertDialog(
@@ -178,6 +182,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     }
 
     finishLoading(ResponseStatus.success);
+    setState(() {
+      _isNeedRetry = true;
+    });
     return;
   }
 
@@ -207,7 +214,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       }
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-      String errorDescription = jsonResponse['error_description'] as String;
+      String errorDescription =
+          jsonResponse['errors'][0]['messages'][0] as String;
       return ResponseObject(ok: false, message: errorDescription);
     }
 
@@ -245,7 +253,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       }
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-      String errorDescription = jsonResponse['error_description'] as String;
+      String errorDescription =
+          jsonResponse['errors'][0]['messages'][0] as String;
       return ResponseObject(ok: false, message: errorDescription);
     }
 
@@ -277,7 +286,8 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
       }
     } else {
       var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-      String errorDescription = jsonResponse['error_description'] as String;
+      String errorDescription =
+          jsonResponse['errors'][0]['messages'][0] as String;
       return ResponseObject(ok: false, message: errorDescription);
     }
 
@@ -358,7 +368,9 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
 
   @override
   void didPopNext() {
-    init();
+    if (_isNeedRetry) {
+      init();
+    }
   }
 
   @override
@@ -450,10 +462,15 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
                 SpeedDialChild(
                     child: const Icon(Icons.person),
                     label: "ユーザー情報",
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const UserInfoPage())),
+                    onTap: () => {
+                          setState(() {
+                            _isNeedRetry = true;
+                          }),
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const UserInfoPage()))
+                        },
                     foregroundColor: Colors.grey[800],
                     labelStyle: TextStyle(color: Colors.grey[800]))
               ]),
