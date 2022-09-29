@@ -223,10 +223,14 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
   }
 
   Future<ResponseObject> getTimeClocks() async {
+    final formatter = DateFormat('yyyy-MM-dd');
+    String targetDate = formatter.format(DateTime.now());
     var url = Uri.https(
-        'api.freee.co.jp',
-        '/hr/api/v1/employees/$_employeeId/time_clocks',
-        {'company_id': _companyId});
+        'api.freee.co.jp', '/hr/api/v1/employees/$_employeeId/time_clocks', {
+      'company_id': _companyId,
+      'from_date': targetDate,
+      'to_date': targetDate
+    });
     Map<String, String> headers = {
       'Authorization': 'Bearer $_accessToken',
       'accept': 'application/json',
@@ -247,6 +251,14 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             type: type,
             typeString: convertAvailableTypeToString(lastTimeClock['type']),
             datetime: formatDate);
+        setState(() {
+          _timeClock = timeClock;
+        });
+      } else {
+        TimeClock timeClock = TimeClock(
+            type: 'clock_out',
+            typeString: convertAvailableTypeToString('clock_out'),
+            datetime: '');
         setState(() {
           _timeClock = timeClock;
         });
