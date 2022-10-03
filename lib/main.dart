@@ -393,68 +393,71 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
           appBar: AppBar(
             title: Text(widget.title),
           ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '現在のステータス',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: Text(
-                        _timeClock.typeString,
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+          body: Container(
+            color: Colors.grey.shade200,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '現在のステータス',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    ),
-                    if (_availableTypes
-                        .where((element) => element == 'clock_in')
-                        .isNotEmpty)
-                      EnableButton(
-                        text: '出勤する',
-                        onPressed: () => apiWrapper(WrappedAPIObject(
-                            function: registerTimeClock,
-                            arg: AvailableType.clockIn)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          _timeClock.typeString,
+                          style: const TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    if (_availableTypes
-                        .where((element) => element == 'break_begin')
-                        .isNotEmpty)
-                      EnableButton(
-                        text: '休憩開始',
-                        onPressed: () => apiWrapper(WrappedAPIObject(
-                            function: registerTimeClock,
-                            arg: AvailableType.breakBegin)),
-                        color: Colors.green,
-                      ),
-                    if (_availableTypes
-                        .where((element) => element == 'break_end')
-                        .isNotEmpty)
-                      EnableButton(
-                        text: '休憩終了',
-                        onPressed: () => apiWrapper(WrappedAPIObject(
-                            function: registerTimeClock,
-                            arg: AvailableType.breakEnd)),
-                        color: Colors.green,
-                      ),
-                    if (_availableTypes
-                            .where((element) => element == 'clock_out')
-                            .isNotEmpty &&
-                        _timeClock.type != 'clock_out')
-                      EnableButton(
-                        text: '退勤する',
-                        onPressed: () => apiWrapper(WrappedAPIObject(
-                            function: registerTimeClock,
-                            arg: AvailableType.clockOut)),
-                        color: Colors.red,
-                      ),
-                  ],
-                ),
-              ],
+                      if (_availableTypes
+                          .where((element) => element == 'clock_in')
+                          .isNotEmpty)
+                        EnableButton(
+                          text: '出勤する',
+                          onPressed: () => apiWrapper(WrappedAPIObject(
+                              function: registerTimeClock,
+                              arg: AvailableType.clockIn)),
+                        ),
+                      if (_availableTypes
+                          .where((element) => element == 'break_begin')
+                          .isNotEmpty)
+                        EnableButton(
+                          text: '休憩開始',
+                          onPressed: () => apiWrapper(WrappedAPIObject(
+                              function: registerTimeClock,
+                              arg: AvailableType.breakBegin)),
+                          color: Colors.green,
+                        ),
+                      if (_availableTypes
+                          .where((element) => element == 'break_end')
+                          .isNotEmpty)
+                        EnableButton(
+                          text: '休憩終了',
+                          onPressed: () => apiWrapper(WrappedAPIObject(
+                              function: registerTimeClock,
+                              arg: AvailableType.breakEnd)),
+                          color: Colors.green,
+                        ),
+                      if (_availableTypes
+                              .where((element) => element == 'clock_out')
+                              .isNotEmpty &&
+                          _timeClock.type != 'clock_out')
+                        EnableButton(
+                          text: '退勤する',
+                          onPressed: () => apiWrapper(WrappedAPIObject(
+                              function: registerTimeClock,
+                              arg: AvailableType.clockOut)),
+                          color: Colors.red,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           floatingActionButton: SpeedDial(

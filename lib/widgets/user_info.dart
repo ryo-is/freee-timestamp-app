@@ -72,137 +72,146 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
             appBar: AppBar(
               title: const Text("ユーザー情報"),
             ),
-            body: Center(
-              child: Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: _isEdit
-                          ? [
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        labelText: 'EmployeeID',
+            body: Container(
+              color: Colors.grey.shade200,
+              child: Center(
+                child: Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 32),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: _isEdit
+                            ? [
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          labelText: 'EmployeeID',
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            _employeeId = value;
+                                          })
+                                        },
                                       ),
-                                      onChanged: (value) => {
-                                        setState(() {
-                                          _employeeId = value;
-                                        })
-                                      },
-                                    ),
-                                  ]),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        labelText: 'CompanyID',
+                                    ]),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          labelText: 'CompanyID',
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            _companyId = value;
+                                          })
+                                        },
                                       ),
-                                      onChanged: (value) => {
-                                        setState(() {
-                                          _companyId = value;
-                                        })
-                                      },
-                                    ),
-                                  ]),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        labelText: 'ClientID',
+                                    ]),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          labelText: 'ClientID',
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            _clientId = value;
+                                          })
+                                        },
                                       ),
-                                      onChanged: (value) => {
-                                        setState(() {
-                                          _clientId = value;
-                                        })
-                                      },
-                                    ),
-                                  ]),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        labelText: 'ClientSecret',
+                                    ]),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          labelText: 'ClientSecret',
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            _clientSecret = value;
+                                          })
+                                        },
                                       ),
-                                      onChanged: (value) => {
-                                        setState(() {
-                                          _clientSecret = value;
-                                        })
-                                      },
-                                    ),
-                                  ]),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        labelText: 'AccessToken',
+                                    ]),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          labelText: 'AccessToken',
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            _accessToken = value;
+                                          })
+                                        },
                                       ),
-                                      onChanged: (value) => {
-                                        setState(() {
-                                          _accessToken = value;
-                                        })
-                                      },
-                                    ),
-                                  ]),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        labelText: 'RefreshToken',
+                                    ]),
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          labelText: 'RefreshToken',
+                                        ),
+                                        onChanged: (value) => {
+                                          setState(() {
+                                            _refreshToken = value;
+                                          })
+                                        },
                                       ),
-                                      onChanged: (value) => {
-                                        setState(() {
-                                          _refreshToken = value;
-                                        })
-                                      },
-                                    ),
-                                  ]),
-                            ]
-                          : [
-                              UserInfoBox(
-                                label: 'EmployeeID',
-                                value: _employeeId,
-                                bgColor: Colors.grey.shade300,
-                              ),
-                              UserInfoBox(
-                                label: 'CompanyID',
-                                value: _companyId,
-                                bgColor: Colors.grey.shade200,
-                              ),
-                              UserInfoBox(
-                                label: 'ClientID',
-                                value: _clientId,
-                                bgColor: Colors.grey.shade300,
-                              ),
-                              UserInfoBox(
-                                label: 'ClientSecret',
-                                value: _clientSecret,
-                                bgColor: Colors.grey.shade200,
-                              ),
-                              UserInfoBox(
-                                label: 'AccessToken',
-                                value: _accessToken,
-                                bgColor: Colors.grey.shade300,
-                              ),
-                              UserInfoBox(
-                                label: 'RefreshToken',
-                                value: _refreshToken,
-                                bgColor: Colors.grey.shade200,
-                              ),
-                            ])),
+                                    ]),
+                              ]
+                            : [
+                                UserInfoBox(
+                                  label: 'EmployeeID',
+                                  value: _employeeId,
+                                  bgColor: Colors.grey.shade300,
+                                ),
+                                UserInfoBox(
+                                  label: 'CompanyID',
+                                  value: _companyId,
+                                  bgColor: Colors.grey.shade200,
+                                ),
+                                UserInfoBox(
+                                  label: 'ClientID',
+                                  value: _clientId,
+                                  bgColor: Colors.grey.shade300,
+                                ),
+                                UserInfoBox(
+                                  label: 'ClientSecret',
+                                  value: _clientSecret,
+                                  bgColor: Colors.grey.shade200,
+                                ),
+                                UserInfoBox(
+                                  label: 'AccessToken',
+                                  value: _accessToken,
+                                  bgColor: Colors.grey.shade300,
+                                ),
+                                UserInfoBox(
+                                  label: 'RefreshToken',
+                                  value: _refreshToken,
+                                  bgColor: Colors.grey.shade200,
+                                ),
+                              ])),
+              ),
             ),
             floatingActionButton: FloatingActionButton(
                 backgroundColor: _isEdit ? Colors.green : Colors.blue,
