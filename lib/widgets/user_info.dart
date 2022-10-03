@@ -73,7 +73,7 @@ class UserInfo extends State<UserInfoPage> with RouteAware {
               title: const Text("ユーザー情報"),
             ),
             body: Container(
-              color: Colors.grey.shade200,
+              color: Colors.grey.shade100,
               child: Center(
                 child: Container(
                     margin: const EdgeInsets.symmetric(

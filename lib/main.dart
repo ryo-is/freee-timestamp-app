@@ -394,7 +394,7 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
             title: Text(widget.title),
           ),
           body: Container(
-            color: Colors.grey.shade200,
+            color: Colors.grey.shade100,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
