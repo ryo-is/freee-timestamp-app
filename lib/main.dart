@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:desktop_window/desktop_window.dart';
 
-import 'package:freee_time_stamp/pages/freee.dart';
+import './pages/freee.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
@@ -10,6 +10,7 @@ void main() async {
 
   await DesktopWindow.setWindowSize(const Size(450, 600));
   await DesktopWindow.setMinWindowSize(const Size(450, 600));
+  await DesktopWindow.setMaxWindowSize(const Size(600, 800));
 
   runApp(const MyApp());
 }
