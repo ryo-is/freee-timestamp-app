@@ -5,29 +5,6 @@ import 'package:freee_time_stamp/pages/freee.dart';
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
-class TimeClock {
-  String type = '';
-  String typeString = '';
-  String datetime = '';
-
-  TimeClock(
-      {required this.type, required this.typeString, required this.datetime});
-}
-
-class ResponseObject {
-  bool ok = true;
-  String message = '';
-
-  ResponseObject({required this.ok, required this.message});
-}
-
-class WrappedAPIObject<T> {
-  Function function = () {};
-  final T? arg;
-
-  WrappedAPIObject({required this.function, this.arg});
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
